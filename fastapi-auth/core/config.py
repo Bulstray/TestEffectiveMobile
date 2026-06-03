@@ -30,4 +30,4 @@ class Settings(BaseSettings):
     db: DatabaseConfig
 
 
-settings = Settings()  # type ignore
+settings = Settings()  # type: ignore[call-arg]
