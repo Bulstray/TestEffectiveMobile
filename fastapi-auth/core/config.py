@@ -1,4 +1,6 @@
-from pydantic import BaseModel, PostgresDsn
+from typing import Self
+
+from pydantic import BaseModel, PostgresDsn, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -15,6 +17,20 @@ class ApiV1Prefix(BaseModel):
 class ApiPrefix(BaseModel):
     prefix: str = "/api"
     v1: ApiV1Prefix = ApiV1Prefix()
+
+
+class RedisDatabaseConfig(BaseModel):
+    default: int = 0
+    tokens: int = 1
+
+    @model_validator(mode="after")
+    def validate_dbs_numbers_unique(self) -> Self:
+        db_values = list(self.model_dump().values())
+
+        if len(set(db_values)) != len(db_values):
+            db_uniq = "Database numbers should be unique"
+            raise ValueError(db_uniq)
+        return self
 
 
 class DatabaseConfig(BaseModel):
