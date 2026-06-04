@@ -1,14 +1,23 @@
 from typing import Annotated
 
 import bcrypt
-from fastapi import Depends, HTTPException, Request, status
+from fastapi import Depends, Form, HTTPException, Request, status
 from fastapi.security import HTTPAuthorizationCredentials
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.models import db_helper
-from core.shemas import UserLogin, UserRead, UserRegistration, UserUpdate
+from core.shemas import (
+    UserLogin,
+    UserRead,
+    UserRegistration,
+    UserUpdate,
+)
 from dependencies.auth import get_current_user, static_api_token
-from storage.db.user_settings.crud import create_user_settings
+from dependencies.permissions import is_superuser
+from storage.db.user_settings.crud import (
+    create_user_settings,
+    update_user_settings,
+)
 from storage.db.users import crud
 from storage.redis.users.crud import redis_tokens
 
@@ -25,6 +34,28 @@ async def logout_system(
     ],
 ) -> None:
     await redis_tokens.delete_token(credentials.credentials)
+
+
+async def update_settings(
+    user_id: Annotated[int, Form(...)],
+    can_see_users: Annotated[bool, Form(...)],
+    is_admin: Annotated[
+        None,
+        Depends(is_superuser),
+    ],
+    session: Annotated[
+        AsyncSession,
+        Depends(db_helper.session_getter),
+    ],
+) -> None:
+
+    await update_user_settings(
+        session,
+        user_id,
+        {
+            "can_see_users": can_see_users,
+        },
+    )
 
 
 async def soft_delete_user(
@@ -98,7 +129,7 @@ async def create_new_account(
 ) -> str:
     if await crud.get_user_by_email(
         session,
-        user_registration.email,
+        f"{user_registration.email}",
     ):
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
@@ -130,7 +161,7 @@ async def validate_basic_auth_user(
 ) -> str:
     user_in_db = await crud.get_user_by_email(
         session,
-        user_login.email,
+        f"{user_login.email}",
     )
 
     if (
