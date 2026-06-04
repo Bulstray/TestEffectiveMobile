@@ -1,6 +1,7 @@
 from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from core.config import SuperUserConfig
 from core.models import User
 from core.shemas import UserRegistration, UserUpdate
 
@@ -18,7 +19,7 @@ async def get_user_by_email(session: AsyncSession, email: str) -> None | User:
 
 async def create_user(
     session: AsyncSession,
-    user_registration: UserRegistration,
+    user_registration: UserRegistration | SuperUserConfig,
 ) -> User:
     user = User(
         **user_registration.model_dump(
