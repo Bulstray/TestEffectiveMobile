@@ -31,3 +31,16 @@ async def can_this_user_see_users(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="You don't have access to this resource",
     )
+
+
+async def is_superuser(
+    current_user: Annotated[
+        UserRead,
+        Depends(get_current_user),
+    ],
+) -> None:
+    if not current_user.is_superuser:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You don't have access to this resource",
+        )
