@@ -8,6 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from core.models import db_helper
 from core.shemas import UserLogin, UserRead, UserRegistration, UserUpdate
 from dependencies.auth import get_current_user, static_api_token
+from storage.db.user_settings.crud import create_user_settings
 from storage.db.users import crud
 from storage.redis.users.crud import redis_tokens
 
@@ -110,6 +111,11 @@ async def create_new_account(
     )
 
     user_read = UserRead.model_validate(user)
+
+    await create_user_settings(
+        session,
+        user_read.id,
+    )
 
     return await redis_tokens.create_token(user_read)
 
