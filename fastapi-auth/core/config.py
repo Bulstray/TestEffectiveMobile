@@ -49,6 +49,12 @@ class DatabaseConfig(BaseModel):
     }
 
 
+class JWTTokenConfig(BaseModel):
+    secret_key: str
+    algorithm: str
+    access_token_expire_minutes: int = 30
+
+
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
         env_file=(
@@ -62,6 +68,7 @@ class Settings(BaseSettings):
     run: RunConfig = RunConfig()
     api: ApiPrefix = ApiPrefix()
     db: DatabaseConfig
+    jwt: JWTTokenConfig
 
 
 settings = Settings()  # type: ignore[call-arg]
