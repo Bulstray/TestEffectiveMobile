@@ -13,6 +13,7 @@ from .dependencies import (
     create_new_account,
     logout_system,
     soft_delete_user,
+    update_settings,
     update_user_profile,
     validate_basic_auth_user,
 )
@@ -26,7 +27,7 @@ router = APIRouter()
     response_model=list[UserRead],
 )
 async def get_all_users(
-    can_see: Annotated[
+    _: Annotated[
         None,
         Depends(can_this_user_see_users),
     ],
@@ -46,6 +47,18 @@ async def current_user(
     ],
 ) -> UserRead:
     return user
+
+
+@router.patch("/update_user_settings")
+async def update_user_settings(
+    _: Annotated[
+        None,
+        Depends(update_settings),
+    ],
+) -> dict[str, str]:
+    return {
+        "message": "user settings updated",
+    }
 
 
 @router.post(
@@ -79,7 +92,7 @@ async def login(
     status_code=status.HTTP_200_OK,
 )
 def update(
-    user_update: Annotated[
+    _: Annotated[
         None,
         Depends(update_user_profile),
     ],
@@ -91,7 +104,7 @@ def update(
 
 @router.delete("/delete_account")
 async def delete_account(
-    user_delete: Annotated[
+    _: Annotated[
         None,
         Depends(soft_delete_user),
     ],
@@ -103,7 +116,7 @@ async def delete_account(
 
 @router.post("/logout")
 async def logout(
-    user_logout: Annotated[
+    _: Annotated[
         None,
         Depends(
             logout_system,
