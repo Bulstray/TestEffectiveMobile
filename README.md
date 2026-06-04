@@ -68,3 +68,26 @@
 ```http
 INFO:     127.0.0.1:64681 - "GET /api/v1/users/ HTTP/1.1" 401 Unauthorized
 ```
+
+
+## Старт приложения
+
+### 1. Клонировать репозиторий
+
+```bash
+git clone https://github.com/Bulstray/TestEffectiveMobile.git
+```
+
+### 2. Установка зависимостей
+```bash
+uv sync
+```
+
+### 3. Настроить переменные окружения
+Создать файл .env внутри fastapi-auth (можно скопировать данные из .env.template)
+Обратить внимание, что совпадают название pg, логина и пароля
+
+### 4. Применить миграции
+```bash
+alembic upgrade head
+```
