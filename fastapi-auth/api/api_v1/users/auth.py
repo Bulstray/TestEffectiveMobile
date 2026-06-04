@@ -5,6 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.models import User, db_helper
 from core.shemas import UserRead
+from dependencies.permissions import can_this_user_see_users
 from storage.db.users import crud
 
 from .dependencies import (
@@ -24,6 +25,10 @@ router = APIRouter()
     response_model=list[UserRead],
 )
 async def get_all_users(
+    can_see: Annotated[
+        None,
+        Depends(can_this_user_see_users),
+    ],
     session: Annotated[
         AsyncSession,
         Depends(db_helper.session_getter),
