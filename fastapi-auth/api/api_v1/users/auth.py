@@ -5,6 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.models import User, db_helper
 from core.shemas import UserRead
+from dependencies.auth import get_current_user
 from dependencies.permissions import can_this_user_see_users
 from storage.db.users import crud
 
@@ -35,6 +36,16 @@ async def get_all_users(
     ],
 ) -> list[User]:
     return await crud.get_all_users(session)
+
+
+@router.get("/me")
+async def current_user(
+    user: Annotated[
+        UserRead,
+        Depends(get_current_user),
+    ],
+) -> UserRead:
+    return user
 
 
 @router.post(
