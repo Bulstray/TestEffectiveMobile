@@ -19,6 +19,11 @@ class ApiPrefix(BaseModel):
     v1: ApiV1Prefix = ApiV1Prefix()
 
 
+class RedisConnectionConfig(BaseModel):
+    host: str = "localhost"
+    port: int = 6379
+
+
 class RedisDatabaseConfig(BaseModel):
     default: int = 0
     tokens: int = 1
@@ -31,6 +36,11 @@ class RedisDatabaseConfig(BaseModel):
             db_uniq = "Database numbers should be unique"
             raise ValueError(db_uniq)
         return self
+
+
+class RedisConfig(BaseModel):
+    connection: RedisConnectionConfig = RedisConnectionConfig()
+    db: RedisDatabaseConfig = RedisDatabaseConfig()
 
 
 class DatabaseConfig(BaseModel):
@@ -61,6 +71,7 @@ class Settings(BaseSettings):
     )
     run: RunConfig = RunConfig()
     api: ApiPrefix = ApiPrefix()
+    redis: RedisConfig = RedisConfig()
     db: DatabaseConfig
 
 
