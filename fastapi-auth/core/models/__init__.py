@@ -1,9 +1,11 @@
 __all__ = (
     "Base",
     "User",
+    "UserSettings",
     "db_helper",
 )
 
 from .base import Base
 from .db_helper import db_helper
 from .user import User
+from .user_settings import UserSettings
