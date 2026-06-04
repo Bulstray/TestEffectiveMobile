@@ -3,6 +3,8 @@ from typing import Self
 from pydantic import BaseModel, PostgresDsn, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+from utils.password_hashed import hash_password
+
 
 class RunConfig(BaseModel):
     host: str = "127.0.0.1"
@@ -59,6 +61,21 @@ class DatabaseConfig(BaseModel):
     }
 
 
+class SuperUserConfig(BaseModel):
+    name: str
+    surname: str
+    patronymics: str
+    email: str
+    hashed_password: str
+    is_superuser: bool = True
+    is_active: bool = True
+
+    @model_validator(mode="after")
+    def hashing_password(self) -> Self:
+        self.hashed_password = hash_password(self.hashed_password)
+        return self
+
+
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
         env_file=(
@@ -73,6 +90,7 @@ class Settings(BaseSettings):
     api: ApiPrefix = ApiPrefix()
     redis: RedisConfig = RedisConfig()
     db: DatabaseConfig
+    superuser: SuperUserConfig
 
 
 settings = Settings()  # type: ignore[call-arg]
