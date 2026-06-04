@@ -9,6 +9,18 @@ from .mixin.int_id_pk import IntIdPkMixin
 class User(IntIdPkMixin, CreatedAtMixin, Base):
     __tablename__ = "users"
 
+    name: Mapped[str] = mapped_column(
+        String(length=64),
+    )
+
+    surname: Mapped[str] = mapped_column(
+        String(length=64),
+    )
+
+    patronymics: Mapped[str] = mapped_column(
+        String(length=64),
+    )
+
     email: Mapped[str] = mapped_column(
         String(320),
         unique=True,
@@ -29,13 +41,6 @@ class User(IntIdPkMixin, CreatedAtMixin, Base):
     )
 
     is_superuser: Mapped[bool] = mapped_column(
-        Boolean,
-        default=False,
-        server_default=false(),
-        nullable=False,
-    )
-
-    is_verified: Mapped[bool] = mapped_column(
         Boolean,
         default=False,
         server_default=false(),
