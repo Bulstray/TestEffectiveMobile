@@ -1,4 +1,4 @@
-from sqlalchemy import select
+from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.models import UserSettings
@@ -23,4 +23,21 @@ async def create_user_settings(
     session.add(
         UserSettings(user_id=user_id),
     )
+    await session.commit()
+
+
+async def update_user_settings(
+    session: AsyncSession,
+    user_id: int,
+    settings: dict[str, bool],
+) -> None:
+    stmt = (
+        update(UserSettings)
+        .where(UserSettings.user_id == user_id)
+        .values(
+            **settings,
+        )
+    )
+
+    await session.execute(stmt)
     await session.commit()
