@@ -93,3 +93,6 @@ select = [
 	"PERF", # Perflint (PERF)
 	"FURB", # refurb (FURB)
 ]
+
+[lint.per-file-ignores]
+"fastapi-auth/core/shemas/users.py" = ["S105"]
