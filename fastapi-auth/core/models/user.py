@@ -1,9 +1,14 @@
+from typing import TYPE_CHECKING
+
 from sqlalchemy import Boolean, String, false, true
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from .base import Base
 from .mixin.created_at import CreatedAtMixin
 from .mixin.int_id_pk import IntIdPkMixin
+
+if TYPE_CHECKING:
+    from .user_settings import UserSettings
 
 
 class User(IntIdPkMixin, CreatedAtMixin, Base):
@@ -45,4 +50,10 @@ class User(IntIdPkMixin, CreatedAtMixin, Base):
         default=False,
         server_default=false(),
         nullable=False,
+    )
+
+    settings: Mapped["UserSettings"] = relationship(
+        "UserSettings",
+        back_populates="user",
+        lazy="selectin",
     )
